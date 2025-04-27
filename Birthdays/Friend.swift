@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import SwiftData
 
+@Model //indicates that the class is designed ot be a data model 
 class Friend {
     var name: String
     var birthday: Date

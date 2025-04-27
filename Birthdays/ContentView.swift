@@ -6,18 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var friends: [Friend] = [
-        Friend(name: "Avipsa", birthday: .now),
-        Friend(name: "Angelica", birthday: Date(timeIntervalSince1970: 0))
-    ]
+    @Query private var friends: [Friend] //query allows us to fetch Friend instances stored in SwiftData
+    @Environment(\.modelContext) private var context //connectino between the view and the model container so we can fetch, insert, and delete items in teh container similar to data caching
     @State private var newName = ""
     @State private var newBirthday = Date.now
     
     var body: some View {
         NavigationStack {
-            List(friends, id: \.name) { friend in
+            List(friends) { friend in
                 HStack {
                     Text(friend.name)
                     Spacer()
@@ -35,7 +34,7 @@ struct ContentView: View {
                     }
                     Button("Save") {
                         let newFriend = Friend(name: newName, birthday: newBirthday)
-                        friends.append(newFriend)
+                        context.insert(newFriend) //inserts the new Friend model into the ModelContext
                         newName = ""
                         newBirthday = .now
                     }
@@ -50,4 +49,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: Friend.self, inMemory: true) // ensures interactive prview also uses SwiftData for data management
+
 }
